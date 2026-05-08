@@ -1,0 +1,28 @@
+{
+  "name": "Opnemen Gesprek — Blinqx",
+  "short_name": "Opnemen",
+  "description": "Gratis tool van Blinqx voor financieel adviseurs. Neem klantgesprekken op of transcribeer live.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0f0f",
+  "theme_color": "#F5C518",
+  "lang": "nl",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
