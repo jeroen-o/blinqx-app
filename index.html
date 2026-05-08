@@ -260,6 +260,17 @@
   input[type="text"]:focus, textarea:focus { outline: none; border-color: #F5C518; box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.25); }
   textarea { resize: vertical; font-family: ui-monospace, 'SF Mono', Consolas, monospace; font-size: 13px; }
 
+  /* Aandacht-flits voor verplichte velden */
+  @keyframes flashRequired {
+    0%, 100% { border-color: #cbd5e1; box-shadow: none; }
+    25%, 75% { border-color: #dc2626; box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2); }
+    50% { border-color: #F5C518; box-shadow: 0 0 0 4px rgba(245, 197, 24, 0.35); }
+  }
+  input.flash-required {
+    animation: flashRequired 0.6s ease-in-out 3;
+    border-color: #dc2626 !important;
+  }
+
   .tabs { display: flex; border-bottom: 1px solid #e2e8f0; margin: -20px -20px 20px -20px; overflow-x: auto; }
   .tab { flex: 1; min-width: fit-content; padding: 14px 10px; background: none; border: none; border-bottom: 2px solid transparent; font-size: 12px; font-weight: 500; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
   .tab:hover { background: #fffdf5; }
@@ -749,8 +760,9 @@
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach(t => t.stop());
       setMicStatus('ready');
+      // Banner direct vervangen door succes
       showBanner('success', 'Microfoon toegestaan', 'Je kunt nu opnemen of live transcriberen.');
-      setTimeout(hideBanner, 3000);
+      setTimeout(hideBanner, 2500);
       showStartButton();
     } catch (err) { handlePermissionError(err); }
   }
@@ -785,6 +797,12 @@
       startLiveBtn.style.display = 'none';
       stopLiveBtn.style.display = 'inline-flex';
       clearLiveBtn.style.display = 'inline-flex';
+      // Microfoon werkt overduidelijk: verberg banner en update mic-status
+      hideBanner();
+      setMicStatus('ready');
+      // Toon bevestiging
+      showBanner('success', 'Microfoon werkt', 'Live transcriberen is actief.');
+      setTimeout(hideBanner, 2000);
     };
     recognition.onresult = (event) => {
       let interim = '';
@@ -823,7 +841,20 @@
 
   function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-  function startLiveTranscription() {
+  async function startLiveTranscription() {
+    // Op iOS Safari moeten we eerst expliciet om microfoon-toegang vragen
+    // anders krijgt SpeechRecognition geen toegang
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(t => t.stop());
+      hideBanner();
+      setMicStatus('ready');
+      showStartButton();
+    } catch (err) {
+      handlePermissionError(err);
+      return;
+    }
+
     if (!recognition) { if (!initSpeechRecognition()) return; }
     recognition.lang = liveLanguage.value;
     try { recognition.start(); }
@@ -885,11 +916,11 @@
     return '';
   }
   function updateButtons() {
-    const hasCustomer = customerName.value.trim().length > 0;
     const hasAudio = audioBlob !== null;
     const hasText = getCurrentTranscriptText().length > 0;
     const hasContent = (activeTab === 'record' && hasAudio) || hasText;
-    downloadBtn.disabled = !(hasCustomer && hasContent);
+    // Download-knop is klikbaar zodra er content is (klantnaam-check gebeurt bij klik)
+    downloadBtn.disabled = !hasContent;
   }
 
   document.querySelectorAll('.tab').forEach(btn => {
@@ -974,6 +1005,17 @@
   customerId.addEventListener('input', updateButtons);
 
   downloadBtn.addEventListener('click', () => {
+    // Check 1: klantnaam ingevuld?
+    if (!customerName.value.trim()) {
+      showStatus('error', '<div><strong>Vul eerst een klantnaam in</strong> om het bestand te downloaden.</div>');
+      // Scroll naar het klantnaam-veld en flits het op
+      customerName.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      customerName.focus();
+      customerName.classList.add('flash-required');
+      setTimeout(() => customerName.classList.remove('flash-required'), 2000);
+      return;
+    }
+
     const naam = sanitizeFilename(customerName.value.trim());
     const datum = new Date().toISOString().split('T')[0];
     const tijd = new Date().toTimeString().split(' ')[0].replace(/:/g, '-');
