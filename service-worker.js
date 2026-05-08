@@ -1,6 +1,6 @@
 // Service Worker voor Opnemen Gesprek (Blinqx)
 // Versie verhogen om gebruikers te dwingen een nieuwe versie te laden
-const CACHE_NAME = 'opnemen-gesprek-v1';
+const CACHE_NAME = 'opnemen-gesprek-v2';
 const ASSETS = [
   '/',
   '/index.html',

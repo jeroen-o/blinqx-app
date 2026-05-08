@@ -153,7 +153,55 @@
 <meta name="apple-mobile-web-app-title" content="Opnemen">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafafa; color: #0f0f0f; line-height: 1.5; padding: 20px; }
+  :root {
+    --bg: #fafafa;
+    --card-bg: white;
+    --text: #0f0f0f;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --input-bg: white;
+    --input-border: #cbd5e1;
+    --hover-bg: #fffdf5;
+    --success-bg: #f0fdf4;
+    --success-border: #bbf7d0;
+    --success-text: #15803d;
+    --info-bg: #eff6ff;
+    --info-border: #bfdbfe;
+    --info-text: #1d4ed8;
+    --error-bg: #fef2f2;
+    --error-border: #fecaca;
+    --error-text: #b91c1c;
+    --transcript-bg: #f8fafc;
+    --tab-active-bg: #fefce8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0a0a;
+      --card-bg: #1a1a1a;
+      --text: #f5f5f5;
+      --text-secondary: #a3a3a3;
+      --text-muted: #737373;
+      --border: #2a2a2a;
+      --input-bg: #2a2a2a;
+      --input-border: #404040;
+      --hover-bg: #2a2a2a;
+      --success-bg: #14532d;
+      --success-border: #22c55e;
+      --success-text: #86efac;
+      --info-bg: #1e3a8a;
+      --info-border: #3b82f6;
+      --info-text: #bfdbfe;
+      --error-bg: #7f1d1d;
+      --error-border: #dc2626;
+      --error-text: #fecaca;
+      --transcript-bg: #1a1a1a;
+      --tab-active-bg: #2a2a2a;
+    }
+  }
+
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding: 20px; }
   .container { max-width: 720px; margin: 0 auto; }
 
   .header {
@@ -246,18 +294,18 @@
     flex-shrink: 0;
   }
 
-  .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-  .card-title { font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 14px; }
+  .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
 
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .form-grid .full { grid-column: 1 / -1; }
   @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
 
-  label { display: block; font-size: 12px; font-weight: 500; color: #334155; margin-bottom: 6px; }
+  label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
   label .required { color: #dc2626; }
 
-  input[type="text"], textarea { width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; font-family: inherit; background: white; color: #0f172a; }
-  input[type="text"]:focus, textarea:focus { outline: none; border-color: #F5C518; box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.25); }
+  input[type="text"], input[type="email"], input[type="tel"], textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--input-border); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--input-bg); color: var(--text); }
+  input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, textarea:focus { outline: none; border-color: #F5C518; box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.25); }
   textarea { resize: vertical; font-family: ui-monospace, 'SF Mono', Consolas, monospace; font-size: 13px; }
 
   /* Aandacht-flits voor verplichte velden */
@@ -301,7 +349,42 @@
   .mic-icon { width: 36px; height: 36px; color: #94a3b8; }
   .mic-circle.recording .mic-icon { color: #dc2626; }
 
-  .timer { font-size: 28px; font-weight: 600; font-family: ui-monospace, 'SF Mono', Consolas, monospace; color: #0f172a; margin-bottom: 20px; }
+  .timer { font-size: 28px; font-weight: 600; font-family: ui-monospace, 'SF Mono', Consolas, monospace; color: var(--text); margin-bottom: 20px; }
+
+  /* Volume indicator (tijdens opname) */
+  .volume-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 16px;
+    padding: 8px 14px;
+    background: var(--success-bg);
+    border-radius: 20px;
+    border: 1px solid var(--success-border);
+  }
+  .volume-indicator .vol-bar {
+    width: 4px;
+    height: 14px;
+    background: #cbd5e1;
+    border-radius: 2px;
+    transition: all 0.1s;
+  }
+  .volume-indicator .vol-bar.active {
+    background: #16a34a;
+    box-shadow: 0 0 4px rgba(22, 163, 74, 0.4);
+  }
+  .volume-indicator .vol-bar:nth-child(1) { height: 8px; }
+  .volume-indicator .vol-bar:nth-child(2) { height: 12px; }
+  .volume-indicator .vol-bar:nth-child(3) { height: 16px; }
+  .volume-indicator .vol-bar:nth-child(4) { height: 12px; }
+  .volume-indicator .vol-bar:nth-child(5) { height: 8px; }
+  .volume-indicator .vol-label {
+    font-size: 11px;
+    color: var(--success-text);
+    margin-left: 8px;
+    font-weight: 500;
+  }
   .btn-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 
   button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; }
@@ -338,13 +421,13 @@
 
   .actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
   .icon { width: 16px; height: 16px; flex-shrink: 0; }
-  .footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 24px; padding: 16px; }
-  .footer strong { color: #0f0f0f; font-weight: 700; }
-  .footer .footer-divider { color: #cbd5e1; margin: 0 8px; }
+  .footer { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 24px; padding: 16px; }
+  .footer strong { color: var(--text); font-weight: 700; }
+  .footer .footer-divider { color: var(--border); margin: 0 8px; }
 
-  .live-transcript-area { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-top: 16px; min-height: 200px; max-height: 400px; overflow-y: auto; font-size: 14px; line-height: 1.7; color: #0f172a; }
-  .live-transcript-area .interim { color: #94a3b8; font-style: italic; }
-  .live-transcript-area:empty::before { content: 'Begin met praten. De tekst verschijnt hier live...'; color: #94a3b8; font-style: italic; font-size: 13px; }
+  .live-transcript-area { background: var(--transcript-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 16px; min-height: 200px; max-height: 400px; overflow-y: auto; font-size: 14px; line-height: 1.7; color: var(--text); }
+  .live-transcript-area .interim { color: var(--text-muted); font-style: italic; }
+  .live-transcript-area:empty::before { content: 'Begin met praten. De tekst verschijnt hier live...'; color: var(--text-muted); font-style: italic; font-size: 13px; }
 
   .live-controls { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
   .live-status { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: #dcfce7; color: #15803d; border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
@@ -529,6 +612,14 @@
           <svg class="mic-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
         </div>
         <div class="timer" id="timer">00:00</div>
+        <div class="volume-indicator" id="volumeIndicator" style="display:none;">
+          <span class="vol-bar"></span>
+          <span class="vol-bar"></span>
+          <span class="vol-bar"></span>
+          <span class="vol-bar"></span>
+          <span class="vol-bar"></span>
+          <span class="vol-label">Microfoon ontvangt geluid</span>
+        </div>
         <div class="btn-row" id="recordControls">
           <button class="btn-primary" id="requestBtn">
             <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
@@ -672,7 +763,9 @@
   <div class="footer">
     Alles draait lokaal in je browser. Geen data wordt verstuurd.
     <br>
-    <strong>BLINQX</strong> <span class="footer-divider">·</span> Gratis tool voor financieel adviseurs <span class="footer-divider">·</span> <a href="https://www.blinqx.tech" target="_blank" rel="noopener noreferrer" style="color:#0f0f0f; text-decoration:none; font-weight:600;">blinqx.tech</a>
+    <strong>BLINQX</strong> <span class="footer-divider">·</span> Gratis tool voor financieel adviseurs <span class="footer-divider">·</span> <a href="https://www.blinqx.tech" target="_blank" rel="noopener noreferrer" style="color:var(--text); text-decoration:none; font-weight:600;">blinqx.tech</a>
+    <br>
+    <span style="font-size:10px; color:var(--text-muted);">Versie 1.1 · Mei 2026 · Sneltoetsen: <kbd style="background:var(--input-bg); border:1px solid var(--input-border); border-radius:3px; padding:1px 5px; font-family:ui-monospace,monospace; font-size:10px;">spatie</kbd> = start/stop · <kbd style="background:var(--input-bg); border:1px solid var(--input-border); border-radius:3px; padding:1px 5px; font-family:ui-monospace,monospace; font-size:10px;">Esc</kbd> = stoppen</span>
   </div>
 </div>
 
@@ -951,14 +1044,20 @@
         previewView.style.display = 'block';
         stream.getTracks().forEach(t => t.stop());
         setMicStatus('ready');
+        stopVolumeIndicator();
         updateButtons();
       };
       mediaRecorder.start();
-      isRecording = true; isPaused = false; seconds = 0;
+      isRecording = true; isPaused = false; seconds = 0; warnedAtSeconds = 0;
       timerEl.textContent = '00:00';
       setMicStatus('recording');
       hideBanner();
-      timerInterval = setInterval(() => { seconds++; timerEl.textContent = formatTime(seconds); }, 1000);
+      startVolumeIndicator(stream);
+      timerInterval = setInterval(() => {
+        seconds++;
+        timerEl.textContent = formatTime(seconds);
+        checkMaxRecordingTime();
+      }, 1000);
       renderRecordControls();
     } catch (err) { handlePermissionError(err); }
   });
@@ -977,7 +1076,7 @@
       '<button class="btn-dark" id="stopBtn"><svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></svg>Stoppen</button>';
     document.getElementById('pauseBtn').addEventListener('click', () => {
       if (!mediaRecorder) return;
-      if (isPaused) { mediaRecorder.resume(); timerInterval = setInterval(() => { seconds++; timerEl.textContent = formatTime(seconds); }, 1000); }
+      if (isPaused) { mediaRecorder.resume(); timerInterval = setInterval(() => { seconds++; timerEl.textContent = formatTime(seconds); checkMaxRecordingTime(); }, 1000); }
       else { mediaRecorder.pause(); clearInterval(timerInterval); }
       isPaused = !isPaused;
       renderRecordControls();
@@ -1036,8 +1135,38 @@
       const header = 'Klantnaam: ' + metadata.klantnaam + '\n' + (metadata.klant_id ? 'Klant-ID: ' + metadata.klant_id + '\n' : '') + 'Datum: ' + metadata.datum + '\n' + 'Taal: ' + metadata.taal + '\n' + (metadata.notities ? 'Notities: ' + metadata.notities + '\n' : '') + '\n' + '='.repeat(60) + '\nLIVE TRANSCRIPTIE\n' + '='.repeat(60) + '\n\n';
       downloadBlob(new Blob([header + liveTranscript.innerText], { type: 'text/plain;charset=utf-8' }), 'live-transcriptie-' + naam + '-' + datum + '-' + tijd + '.txt');
     }
-    showStatus('success', '<div>Bestand gedownload.</div>');
+
+    // Auto-save wissen want we hebben gedownload
+    try { localStorage.removeItem('autosave_transcript'); } catch(e) {}
+
+    // Vraag of klantgegevens gewist mogen worden voor de volgende klant
+    showStatus('success', '<div>✓ Bestand gedownload. <button id="clearDataBtn" style="background:none;border:none;color:#15803d;text-decoration:underline;cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;padding:0;margin-left:8px;">Klantgegevens wissen voor volgende klant</button></div>');
+    const clearBtn = document.getElementById('clearDataBtn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        clearCustomerData();
+      });
+    }
   });
+
+  function clearCustomerData() {
+    customerName.value = '';
+    customerId.value = '';
+    notes.value = '';
+    // Wis ook transcript en audio
+    finalTranscript = '';
+    liveTranscript.innerHTML = '';
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    audioBlob = null; audioUrl = null; seconds = 0;
+    timerEl.textContent = '00:00';
+    previewView.style.display = 'none';
+    recordView.style.display = 'block';
+    try { localStorage.removeItem('autosave_transcript'); } catch(e) {}
+    updateLiveCharCount();
+    updateButtons();
+    showStatus('info', '<div>Klantgegevens en transcriptie zijn gewist. Klaar voor de volgende klant.</div>');
+    customerName.focus();
+  }
 
   function downloadBlob(blob, filename) {
     const url = URL.createObjectURL(blob);
@@ -1051,6 +1180,160 @@
 
   checkPermissionStatus();
   updateButtons();
+
+  // ============================================================
+  // AUTO-SAVE TRANSCRIPTIE (elke 5 seconden naar localStorage)
+  // ============================================================
+
+  // Bij laden: probeer eerder werk te herstellen
+  function tryRestoreAutoSave() {
+    try {
+      const saved = localStorage.getItem('autosave_transcript');
+      if (!saved) return;
+      const data = JSON.parse(saved);
+      // Alleen aanbieden als het minder dan 24 uur geleden is
+      const age = Date.now() - (data.timestamp || 0);
+      if (age > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem('autosave_transcript');
+        return;
+      }
+      if (data.transcript && data.transcript.length > 0) {
+        const minutesAgo = Math.round(age / 60000);
+        const tijdTekst = minutesAgo < 1 ? 'minder dan een minuut' : minutesAgo + ' minuten';
+        showStatus('info',
+          '<div>📝 We vonden een niet-opgeslagen transcriptie van ' + tijdTekst + ' geleden. ' +
+          '<button id="restoreBtn" style="background:none;border:none;color:#1d4ed8;text-decoration:underline;cursor:pointer;font-weight:600;font-size:13px;padding:0;margin-left:6px;">Herstellen</button> ' +
+          '<button id="discardBtn" style="background:none;border:none;color:#94a3b8;text-decoration:underline;cursor:pointer;font-size:13px;padding:0;margin-left:6px;">Negeren</button></div>'
+        );
+        document.getElementById('restoreBtn')?.addEventListener('click', () => {
+          finalTranscript = data.transcript;
+          liveTranscript.innerHTML = escapeHtml(data.transcript);
+          if (data.klantnaam) customerName.value = data.klantnaam;
+          if (data.klantid) customerId.value = data.klantid;
+          if (data.notities) notes.value = data.notities;
+          updateLiveCharCount();
+          updateButtons();
+          statusEl.style.display = 'none';
+          showStatus('success', '<div>✓ Transcriptie hersteld.</div>');
+        });
+        document.getElementById('discardBtn')?.addEventListener('click', () => {
+          localStorage.removeItem('autosave_transcript');
+          statusEl.style.display = 'none';
+        });
+      }
+    } catch(e) { /* stil falen */ }
+  }
+
+  function autoSave() {
+    try {
+      const txt = liveTranscript.innerText.trim();
+      if (!txt) return;
+      localStorage.setItem('autosave_transcript', JSON.stringify({
+        transcript: txt,
+        klantnaam: customerName.value.trim(),
+        klantid: customerId.value.trim(),
+        notities: notes.value.trim(),
+        timestamp: Date.now()
+      }));
+    } catch(e) { /* stil falen */ }
+  }
+
+  setInterval(autoSave, 5000);
+  tryRestoreAutoSave();
+
+  // ============================================================
+  // SNELTOETSEN
+  // ============================================================
+
+  document.addEventListener('keydown', (e) => {
+    // Niet activeren als gebruiker in een invoerveld typt
+    const inField = ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) ||
+                    document.activeElement.isContentEditable;
+    if (inField) return;
+
+    // Spatiebalk: start/stop opname of transcriptie
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (activeTab === 'record') {
+        if (isRecording) {
+          document.getElementById('stopBtn')?.click();
+        } else if (startBtn.style.display !== 'none') {
+          startBtn.click();
+        }
+      } else if (activeTab === 'live') {
+        if (isListening) {
+          stopLiveBtn.click();
+        } else {
+          startLiveBtn.click();
+        }
+      }
+    }
+
+    // Esc: stop alle opnames
+    if (e.code === 'Escape') {
+      if (isRecording) document.getElementById('stopBtn')?.click();
+      if (isListening) stopLiveBtn.click();
+    }
+  });
+
+  // ============================================================
+  // GELUIDSINDICATOR (volume bars tijdens opname)
+  // ============================================================
+
+  let audioContext = null, analyser = null, animationFrame = null;
+
+  function startVolumeIndicator(stream) {
+    try {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(analyser);
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      const indicator = document.getElementById('volumeIndicator');
+      if (!indicator) return;
+      indicator.style.display = 'flex';
+
+      function update() {
+        analyser.getByteFrequencyData(dataArray);
+        // Bereken gemiddelde volume
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+        const avg = sum / dataArray.length;
+        // Update 5 balkjes
+        const bars = indicator.querySelectorAll('.vol-bar');
+        const level = Math.min(5, Math.ceil(avg / 25));
+        bars.forEach((bar, i) => {
+          bar.classList.toggle('active', i < level);
+        });
+        animationFrame = requestAnimationFrame(update);
+      }
+      update();
+    } catch(e) { /* stil falen */ }
+  }
+
+  function stopVolumeIndicator() {
+    if (animationFrame) cancelAnimationFrame(animationFrame);
+    if (audioContext) { try { audioContext.close(); } catch(e) {} audioContext = null; }
+    const indicator = document.getElementById('volumeIndicator');
+    if (indicator) indicator.style.display = 'none';
+  }
+
+  // ============================================================
+  // MAX OPNAME-TIJD WAARSCHUWING (na 60 minuten)
+  // ============================================================
+
+  let warnedAtSeconds = 0;
+  function checkMaxRecordingTime() {
+    if (seconds >= 3600 && warnedAtSeconds < 3600) {
+      warnedAtSeconds = 3600;
+      showStatus('info', '<div>⏰ <strong>Opname loopt al 1 uur.</strong> Lange opnames kunnen instabiel worden in browsers. Overweeg om te stoppen en een nieuwe opname te starten.</div>');
+    } else if (seconds >= 7200 && warnedAtSeconds < 7200) {
+      warnedAtSeconds = 7200;
+      showStatus('error', '<div>⚠️ <strong>Opname loopt al 2 uur.</strong> Stop nu om verlies van data te voorkomen.</div>');
+    }
+  }
 
   // ============================================================
   // PWA: Service Worker registratie + install prompt
